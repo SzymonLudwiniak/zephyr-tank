@@ -5,21 +5,25 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(BASIC_COMPILE_OPTIONS
     -Wall
-    -pedantic
+    -Werror
 )
 
 if(NOT BUILD_TESTING)
     find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-
-    if(NOT BOARD STREQUAL "stm32f429i_disc1")
-        message(FATAL_ERROR "-- Wrong target, aborting...")        
+    
+    if(BOARD STREQUAL "stm32h747i_disco" AND CHIP STREQUAL "m4")
+        project(tank-m4)
+        target_sources(app PRIVATE main_m4.cpp)
+        # target_link_libraries(app ...)
+    elseif(BOARD STREQUAL "stm32h747i_disco" AND CHIP STREQUAL "m7")
+        project(tank-m7)
+        target_sources(app PRIVATE main_m7.cpp)
+        target_link_libraries(app 
+            PUBLIC
+            )
+    else()
+        message(FATAL_ERROR "-- Wrong target, aborting...")
     endif()
-
-    project(tank)
-    target_sources(app PRIVATE main.cpp)
-    target_link_libraries(app 
-        PUBLIC
-        )
 
     enable_language(C CXX ASM)
     set(CMAKE_C_STANDARD 11)
@@ -36,21 +40,21 @@ if(NOT BUILD_TESTING)
         -Wno-missing-field-initializers
     )
 
-    add_subdirectory(src)
+    add_subdirectory(src EXCLUDE_FROM_ALL)
 
 else()
 
-    # project(UnitTests)
+    project(UnitTests)
 
-    # set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 17)
 
-    # enable_testing()
+    enable_testing()
 
-    # add_compile_options(${BASIC_COMPILE_OPTIONS})
+    add_compile_options(${BASIC_COMPILE_OPTIONS})
 
-    # add_subdirectory(src EXCLUDE_FROM_ALL)
-    # add_subdirectory(testing)
+    add_subdirectory(src EXCLUDE_FROM_ALL)
+    add_subdirectory(testing)
 
 endif()
 
-# add_subdirectory(etl SYSTEM)
+add_subdirectory(etl SYSTEM)

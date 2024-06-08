@@ -127,6 +127,5 @@ RUN useradd -d /home/non-root -m -s /bin/bash non-root
 RUN chown -R non-root:non-root /zephyrproject/zephyr/
 
 USER non-root
-RUN /zephyrproject/zephyr-sdk-0.16.5/setup.sh -c 
 
 USER root
